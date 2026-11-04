@@ -76,10 +76,15 @@ services:
     volumes:
       - /opt/actual:/data
     environment:
-      # Self-signed, like Pi-hole's own admin page. Browsers show a
-      # one-time warning to click past; regenerate before 2036-11-01.
-      - ACTUAL_HTTPS_KEY=/data/selfhost.key
-      - ACTUAL_HTTPS_CERT=/data/selfhost.crt
+      # Real, browser-trusted cert for kidney's Tailscale name
+      # (kidney.dinosaur-aldebaran.ts.net), issued by `tailscale cert`.
+      # Renew with the same command before it expires (Tailscale/Let's
+      # Encrypt certs are short-lived, ~90 days) — not yet automated.
+      # Only one cert is served: visiting by the plain LAN IP instead of
+      # the Tailscale name now shows a hostname-mismatch warning instead
+      # of a self-signed one (selfhost.* is unused but left in /opt/actual).
+      - ACTUAL_HTTPS_KEY=/data/tailscale.key
+      - ACTUAL_HTTPS_CERT=/data/tailscale.crt
     healthcheck:
       test: ["CMD-SHELL", "node scripts/health-check.js"]
       interval: 60s
