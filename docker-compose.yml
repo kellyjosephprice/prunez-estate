@@ -66,3 +66,18 @@ services:
       # Optional, gives FTL a bit more processing priority
       - SYS_NICE
     restart: unless-stopped
+
+  actual:
+    container_name: actual
+    image: docker.io/actualbudget/actual-server:latest
+    restart: unless-stopped
+    ports:
+      - 5006:5006
+    volumes:
+      - /opt/actual:/data
+    healthcheck:
+      test: ["CMD-SHELL", "node scripts/health-check.js"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
