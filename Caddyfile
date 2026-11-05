@@ -1,4 +1,15 @@
-kidney.dinosaur-aldebaran.ts.net:8222 {
+{
+	# No QUIC/UDP — avoids a hang while browsers try HTTP/3 first and
+	# fall back. Plain HTTP/2 over TCP is all this needs.
+	servers {
+		protocols h1 h2
+	}
+}
+
+# Listening on the port regardless of hostname (not keyed to the Tailscale
+# name specifically) — so it still serves over the plain LAN IP too, just
+# with a hostname-mismatch warning instead of refusing the connection.
+:8222 {
 	tls /certs/tailscale.crt /certs/tailscale.key
 	reverse_proxy vaultwarden:80
 }
