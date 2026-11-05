@@ -86,7 +86,15 @@ services:
       - ACTUAL_HTTPS_KEY=/data/tailscale.key
       - ACTUAL_HTTPS_CERT=/data/tailscale.crt
     healthcheck:
-      test: ["CMD-SHELL", "node scripts/health-check.js"]
+      # The image's own health-check.js connects to https://localhost and
+      # fails TLS hostname verification, since our cert only covers the
+      # Tailscale name. rejectUnauthorized is only skipped for this
+      # same-host liveness probe — real clients still get full verification.
+      test:
+        [
+          "CMD-SHELL",
+          "node -e \"require('https').get({host:'localhost',port:5006,rejectUnauthorized:false},r=>process.exit(r.statusCode<500?0:1)).on('error',()=>process.exit(1))\"",
+        ]
       interval: 60s
       timeout: 10s
       retries: 3
