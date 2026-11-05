@@ -108,8 +108,7 @@ services:
       - /opt/vaultwarden:/data
     environment:
       DOMAIN: "https://kidney.dinosaur-aldebaran.ts.net:8222"
-      # Flip to "false" once you've created your account.
-      SIGNUPS_ALLOWED: "true"
+      SIGNUPS_ALLOWED: "false"
       # Generated locally, not committed. See ~/.config/vaultwarden/admin-token.
       ADMIN_TOKEN: "${VAULTWARDEN_ADMIN_TOKEN}"
 
