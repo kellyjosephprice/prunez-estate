@@ -99,3 +99,31 @@ services:
       timeout: 10s
       retries: 3
       start_period: 20s
+
+  vaultwarden:
+    container_name: vaultwarden
+    image: vaultwarden/server:latest
+    restart: unless-stopped
+    volumes:
+      - /opt/vaultwarden:/data
+    environment:
+      DOMAIN: "https://kidney.dinosaur-aldebaran.ts.net:8222"
+      # Flip to "false" once you've created your account.
+      SIGNUPS_ALLOWED: "true"
+      # Generated locally, not committed. See ~/.config/vaultwarden/admin-token.
+      ADMIN_TOKEN: "${VAULTWARDEN_ADMIN_TOKEN}"
+
+  vaultwarden-proxy:
+    container_name: vaultwarden-proxy
+    image: caddy:latest
+    restart: unless-stopped
+    ports:
+      - 8222:8222
+    volumes:
+      # Reused from Actual — same hostname, same cert works for any port.
+      # Renewing it still only updates /opt/actual's copy; see the playbook.
+      - /opt/vaultwarden/tailscale.crt:/certs/tailscale.crt:ro
+      - /opt/vaultwarden/tailscale.key:/certs/tailscale.key:ro
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      - vaultwarden

@@ -1,0 +1,4 @@
+kidney.dinosaur-aldebaran.ts.net:8222 {
+	tls /certs/tailscale.crt /certs/tailscale.key
+	reverse_proxy vaultwarden:80
+}
