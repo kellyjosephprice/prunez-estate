@@ -99,35 +99,3 @@ services:
       timeout: 10s
       retries: 3
       start_period: 20s
-
-  netdata:
-    container_name: netdata
-    image: netdata/netdata
-    restart: unless-stopped
-    hostname: kidney
-    ports:
-      - 19999:19999
-    # Needs broad read access to the host to report full metrics (and
-    # docker.sock to see per-container stats) — more than the other
-    # containers here get. Not included in the nightly backup; this is
-    # live telemetry, not data worth preserving.
-    cap_add:
-      - SYS_PTRACE
-      - SYS_ADMIN
-    security_opt:
-      - apparmor:unconfined
-    volumes:
-      - netdataconfig:/etc/netdata
-      - netdatalib:/var/lib/netdata
-      - netdatacache:/var/cache/netdata
-      - /etc/passwd:/host/etc/passwd:ro
-      - /etc/group:/host/etc/group:ro
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /etc/os-release:/host/etc/os-release:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-
-volumes:
-  netdataconfig:
-  netdatalib:
-  netdatacache:
